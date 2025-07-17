@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { Download, RefreshCw, Filter, Database } from 'lucide-react';
+import { RefreshCw, Filter, Database } from 'lucide-react';
+import ExportButtons from './ExportButtons';
 import { 
   vendorBillsData, 
   customerInvoicesData, 
@@ -42,8 +43,8 @@ const ReportsTab: React.FC = () => {
     }));
 
     return (
-      <div className="space-y-6">
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="space-y-6" id="income-statement-report">
+        <div className="bg-white p-6 rounded-lg border border-gray-200" id="income-chart">
           <h3 className="text-lg font-semibold mb-4">Income Statement - YTD</h3>
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={combinedData}>
@@ -62,7 +63,7 @@ const ReportsTab: React.FC = () => {
         </div>
 
         {/* Trend Analysis */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200" id="trend-chart">
           <h3 className="text-lg font-semibold mb-4">Revenue Trend Analysis</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={combinedData}>
@@ -109,8 +110,8 @@ const ReportsTab: React.FC = () => {
     const COLORS = ['#000000', '#333333', '#666666', '#999999'];
 
     return (
-      <div className="space-y-6">
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="space-y-6" id="vendor-bills-report">
+        <div className="bg-white p-6 rounded-lg border border-gray-200" id="vendor-pie-chart">
           <h3 className="text-lg font-semibold mb-4">Vendor Bills by Status</h3>
           <ResponsiveContainer width="100%" height={350}>
             <PieChart>
@@ -134,7 +135,7 @@ const ReportsTab: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200" id="vendor-table">
           <h3 className="text-lg font-semibold mb-4">Recent Vendor Bills</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -193,7 +194,7 @@ const ReportsTab: React.FC = () => {
 
   const renderAgeingReport = () => {
     return (
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="bg-white p-6 rounded-lg border border-gray-200" id="aging-report">
         <h3 className="text-lg font-semibold mb-4">Accounts Receivable Aging</h3>
         
         {/* Summary Cards */}
@@ -299,10 +300,16 @@ const ReportsTab: React.FC = () => {
             <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
             <span>Refresh</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800">
-            <Download size={18} />
-            <span>Export</span>
-          </button>
+          <ExportButtons
+            data={selectedReport === 'income' ? incomeStatementData.revenue : 
+                  selectedReport === 'vendors' ? vendorBillsData : 
+                  arAgeingData}
+            filename={`${selectedReport}-report-${new Date().toISOString().split('T')[0]}`}
+            reportType={selectedReport}
+            elementId={selectedReport === 'income' ? 'income-statement-report' : 
+                      selectedReport === 'vendors' ? 'vendor-bills-report' : 
+                      'aging-report'}
+          />
         </div>
       </div>
 

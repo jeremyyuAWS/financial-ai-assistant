@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, Users, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
+import ExportButtons from './ExportButtons';
 import { 
   vendorBillsData, 
   customerInvoicesData, 
@@ -181,23 +182,31 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="dashboard-report">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Executive Dashboard</h2>
-        <div className="flex space-x-2">
-          {['YTD', 'Q4', 'Q3', 'Monthly'].map((period) => (
-            <button
-              key={period}
-              onClick={() => setSelectedPeriod(period)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedPeriod === period
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {period}
-            </button>
-          ))}
+        <div className="flex items-center space-x-4">
+          <div className="flex space-x-2">
+            {['YTD', 'Q4', 'Q3', 'Monthly'].map((period) => (
+              <button
+                key={period}
+                onClick={() => setSelectedPeriod(period)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedPeriod === period
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {period}
+              </button>
+            ))}
+          </div>
+          <ExportButtons
+            data={revenueData}
+            filename={`executive-dashboard-${new Date().toISOString().split('T')[0]}`}
+            reportType="Executive Dashboard"
+            elementId="dashboard-report"
+          />
         </div>
       </div>
 

@@ -7,6 +7,9 @@ import ReportsTab from './components/ReportsTab';
 import Dashboard from './components/Dashboard';
 import AdminTab from './components/AdminTab';
 import UsersTab from './components/UsersTab';
+import PWAInstallBanner from './components/PWAInstallBanner';
+import OfflineIndicator from './components/OfflineIndicator';
+import NotificationManager from './components/NotificationManager';
 
 const AppContent: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -47,6 +50,9 @@ const AppContent: React.FC = () => {
   return (
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
       {renderActiveTab()}
+      <PWAInstallBanner />
+      <OfflineIndicator />
+      <NotificationManager />
     </Layout>
   );
 };
