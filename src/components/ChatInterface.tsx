@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Send, Bot, User, Clock, CheckCircle, AlertCircle, Play, Pause, RotateCcw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ChatMessage } from '../types';
+import { demoConversations, getConversationById } from '../data/conversations';
 import { 
   chatHistoryData, 
   vendorBillsData, 
@@ -21,7 +22,11 @@ const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>(chatHistoryData);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [autoplayActive, setAutoplayActive] = useState(false);
+  const [currentDemo, setCurrentDemo] = useState<string | null>(null);
+  const [demoProgress, setDemoProgress] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const autoplayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useAuth();
 
   const scrollToBottom = () => {
@@ -31,6 +36,85 @@ const ChatInterface: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const stopAutoplay = () => {
+    if (autoplayTimeoutRef.current) {
+      clearTimeout(autoplayTimeoutRef.current);
+    }
+    setAutoplayActive(false);
+    setCurrentDemo(null);
+    setDemoProgress(0);
+    setIsTyping(false);
+  };
+
+  const startAutoplayDemo = (demoId: string) => {
+    // Stop any existing autoplay
+    stopAutoplay();
+    
+    // Clear current messages
+    setMessages([]);
+    
+    // Get the demo conversation
+    const conversation = getConversationById(demoId);
+    if (!conversation || conversation.length === 0) return;
+    
+    setCurrentDemo(demoId);
+    setAutoplayActive(true);
+    setDemoProgress(0);
+    
+    // Play the conversation
+    playConversation(conversation);
+  };
+
+  const playConversation = (conversation: ChatMessage[]) => {
+    let currentIndex = 0;
+    
+    const playNext = () => {
+      if (currentIndex >= conversation.length) {
+        setAutoplayActive(false);
+        setCurrentDemo(null);
+        setDemoProgress(0);
+        return;
+      }
+      
+      const message = conversation[currentIndex];
+      setDemoProgress(((currentIndex + 1) / conversation.length) * 100);
+      
+      // Add user message
+      const userMessage: ChatMessage = {
+        ...message,
+        id: `demo-${Date.now()}-${currentIndex}`,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, { ...userMessage, response: '' }]);
+      
+      // Simulate typing
+      setIsTyping(true);
+      
+      // Add bot response after delay
+      autoplayTimeoutRef.current = setTimeout(() => {
+        setMessages(prev => prev.map(msg => 
+          msg.id === userMessage.id ? { ...msg, response: message.response } : msg
+        ));
+        setIsTyping(false);
+        
+        // Move to next message
+        currentIndex++;
+        
+        // Continue with next message after a brief pause
+        if (currentIndex < conversation.length) {
+          autoplayTimeoutRef.current = setTimeout(playNext, 1500);
+        } else {
+          setAutoplayActive(false);
+          setCurrentDemo(null);
+          setDemoProgress(0);
+        }
+      }, 1500 + Math.random() * 1000);
+    };
+    
+    playNext();
+  };
 
   const simulateQuery = (query: string): string => {
     const lowerQuery = query.toLowerCase();
@@ -87,6 +171,11 @@ const ChatInterface: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !user) return;
+    
+    // Stop autoplay if user starts typing
+    if (autoplayActive) {
+      stopAutoplay();
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -124,8 +213,88 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="h-[600px] flex flex-col bg-white border border-gray-200 rounded-lg">
+    <div className="space-y-6">
+      {/* Demo Conversation Tags */}
+      <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Demo Scenarios</h3>
+          {autoplayActive && (
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-32 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-gray-900 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${demoProgress}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm text-gray-600">{Math.round(demoProgress)}%</span>
+              </div>
+              <button
+                onClick={stopAutoplay}
+                className="flex items-center space-x-2 px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm"
+              >
+                <Pause size={14} />
+                <span>Stop Demo</span>
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {demoConversations.map((demo) => (
+            <div key={demo.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">{demo.icon}</span>
+                  <h4 className="font-medium text-gray-900">{demo.title}</h4>
+                </div>
+                <span className={`text-xs px-2 py-1 rounded-full ${demo.color}`}>
+                  {demo.difficulty}
+                </span>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{demo.description}</p>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 text-xs text-gray-500">
+                  <span>{demo.duration}</span>
+                  <span>•</span>
+                  <span>{demo.category}</span>
+                </div>
+                
+                <button
+                  onClick={() => startAutoplayDemo(demo.id)}
+                  disabled={autoplayActive}
+                  className="flex items-center space-x-1 px-3 py-1 bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 text-sm"
+                >
+                  <Play size={14} />
+                  <span>Play</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {!autoplayActive && (
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600 text-center">
+              💡 Click any demo scenario above to see a realistic conversation between a finance professional and the AI assistant
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Chat Interface */}
+      <div className="h-[600px] flex flex-col bg-white border border-gray-200 rounded-lg">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && !autoplayActive && (
+          <div className="text-center text-gray-500 mt-8">
+            <Bot size={48} className="mx-auto mb-4 text-gray-300" />
+            <p className="text-lg font-medium">Financial AI Assistant</p>
+            <p className="text-sm mt-2">Start by selecting a demo scenario above or ask me a question about your financial data</p>
+          </div>
+        )}
+        
         {messages.map((message) => (
           <div key={message.id} className="space-y-2">
             {/* User Message */}
@@ -192,19 +361,20 @@ const ChatInterface: React.FC = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me about vendor bills, invoices, aging reports, financial statements..."
+            placeholder={autoplayActive ? "Demo in progress..." : "Ask me about vendor bills, invoices, aging reports, financial statements..."}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-            disabled={isTyping}
+            disabled={isTyping || autoplayActive}
           />
           <button
             type="submit"
-            disabled={isTyping || !input.trim()}
+            disabled={isTyping || !input.trim() || autoplayActive}
             className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={18} />
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 };
