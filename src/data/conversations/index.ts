@@ -6,6 +6,14 @@ export * from './budgetPlanning';
 export * from './collectionsStrategy';
 export * from './vendorNegotiation';
 
+// Import conversation variables for local use
+import { monthEndReviewConversation } from './monthEndReview';
+import { auditPrepConversation } from './auditPrep';
+import { cashFlowCrisisConversation } from './cashFlowCrisis';
+import { budgetPlanningConversation } from './budgetPlanning';
+import { collectionsStrategyConversation } from './collectionsStrategy';
+import { vendorNegotiationConversation } from './vendorNegotiation';
+
 // Demo conversation registry
 export const demoConversations = [
   {
