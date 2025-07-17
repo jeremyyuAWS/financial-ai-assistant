@@ -74,17 +74,17 @@ export const demoConversations = [
 export const getConversationById = (id: string) => {
   switch (id) {
     case 'month-end-review':
-      return require('./monthEndReview').monthEndReviewConversation;
+      return monthEndReviewConversation;
     case 'audit-prep':
-      return require('./auditPrep').auditPrepConversation;
+      return auditPrepConversation;
     case 'cash-flow-crisis':
-      return require('./cashFlowCrisis').cashFlowCrisisConversation;
+      return cashFlowCrisisConversation;
     case 'budget-planning':
-      return require('./budgetPlanning').budgetPlanningConversation;
+      return budgetPlanningConversation;
     case 'collections-strategy':
-      return require('./collectionsStrategy').collectionsStrategyConversation;
+      return collectionsStrategyConversation;
     case 'vendor-negotiation':
-      return require('./vendorNegotiation').vendorNegotiationConversation;
+      return vendorNegotiationConversation;
     default:
       return [];
   }
