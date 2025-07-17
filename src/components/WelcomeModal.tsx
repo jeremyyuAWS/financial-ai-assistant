@@ -112,34 +112,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
     }
   ];
 
-      description: 'Ask questions in plain English about your financial data',
-      icon: <MessageSquare className="h-5 w-5 text-blue-600" />
-    },
-    {
-      step: 2,
-      title: 'AI Processing',
-      description: 'Advanced AI analyzes your query and determines data requirements',
-      icon: <Brain className="h-5 w-5 text-green-600" />
-    },
-    {
-      step: 3,
-      title: 'Data Retrieval',
-      description: 'Secure access to NetSuite and QuickBooks data based on your role',
-      icon: <Shield className="h-5 w-5 text-purple-600" />
-    },
-    {
-      step: 4,
-      title: 'Intelligent Analysis',
-      description: 'AI processes and analyzes the data to generate insights',
-      icon: <BarChart3 className="h-5 w-5 text-orange-600" />
-    },
-    {
-      step: 5,
-      title: 'Actionable Response',
-      description: 'Receive clear answers with visualizations and recommendations',
-      icon: <TrendingUp className="h-5 w-5 text-red-600" />
-    }
-  ];
 
   const renderOverview = () => (
     <div className="space-y-6">
