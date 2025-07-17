@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginForm from './components/LoginForm';
 import Layout from './components/Layout';
@@ -10,10 +10,25 @@ import UsersTab from './components/UsersTab';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import OfflineIndicator from './components/OfflineIndicator';
 import NotificationManager from './components/NotificationManager';
+import WelcomeModal from './components/WelcomeModal';
 
 const AppContent: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+
+  useEffect(() => {
+    // Show welcome modal for first-time users
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    if (isAuthenticated && !hasSeenWelcome) {
+      setShowWelcomeModal(true);
+    }
+  }, [isAuthenticated]);
+
+  const handleWelcomeClose = () => {
+    setShowWelcomeModal(false);
+    localStorage.setItem('hasSeenWelcome', 'true');
+  };
 
   if (!isAuthenticated) {
     return <LoginForm />;
@@ -53,6 +68,10 @@ const AppContent: React.FC = () => {
       <PWAInstallBanner />
       <OfflineIndicator />
       <NotificationManager />
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={handleWelcomeClose}
+      />
     </Layout>
   );
 };

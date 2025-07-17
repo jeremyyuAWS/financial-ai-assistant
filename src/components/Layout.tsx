@@ -1,6 +1,7 @@
 import React from 'react';
-import { Users, MessageSquare, BarChart3, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Users, MessageSquare, BarChart3, Settings, LogOut, LayoutDashboard, HelpCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import WelcomeModal from './WelcomeModal';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
   const { user, logout, hasRole } = useAuth();
+  const [showWelcomeModal, setShowWelcomeModal] = React.useState(false);
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'finance', 'executive', 'business_unit', 'collections'] },
@@ -35,6 +37,13 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
               <span className="text-sm text-gray-600">
                 {user?.name} ({user?.role})
               </span>
+              <button
+                onClick={() => setShowWelcomeModal(true)}
+                className="text-gray-500 hover:text-gray-700 p-1"
+                title="Help & Information"
+              >
+                <HelpCircle size={20} />
+              </button>
               <button
                 onClick={logout}
                 className="text-gray-500 hover:text-gray-700 p-1"
@@ -73,6 +82,11 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
+      
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+      />
     </div>
   );
 };
