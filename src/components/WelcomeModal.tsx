@@ -89,29 +89,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
     {
       step: 1,
       title: 'Natural Language Query',
-      description: 'Users ask questions in plain English about financial data',
-      icon: <MessageSquare className="h-6 w-6" />
-    },
-    {
-      step: 2,
-      title: 'AI Processing',
-      description: 'Advanced NLP analyzes intent and extracts relevant financial concepts',
-      icon: <Brain className="h-6 w-6" />
-    },
-    {
-      step: 3,
-      title: 'Data Retrieval',
-      description: 'Secure integration with NetSuite, QuickBooks, and other systems',
-      icon: <BarChart3 className="h-6 w-6" />
-    },
-    {
-      step: 4,
-      title: 'Intelligent Response',
-      description: 'AI delivers actionable insights with visualizations and recommendations',
-      icon: <TrendingUp className="h-6 w-6" />
-    }
-  ];
-
   const renderOverview = () => (
     <div className="space-y-6">
       <div className="text-center">
@@ -236,24 +213,61 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
       <div className="text-center">
         <h3 className="text-xl font-bold text-gray-900 mb-2">Business Value & ROI</h3>
         <p className="text-gray-600">
-          Measurable impact on your finance operations and decision-making
+          Transform your finance operations and decision-making capabilities
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {businessValue.map((value, index) => (
-          <div key={index} className="bg-gray-50 rounded-lg p-6 text-center">
-            <div className="flex justify-center mb-3">
-              {value.icon}
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">{value.metric}</div>
-            <p className="text-sm text-gray-600">{value.description}</p>
+      <div className="bg-gray-50 rounded-lg p-6">
+        <h4 className="font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+          <TrendingUp className="h-5 w-5" />
+          <span>Core Business Benefits</span>
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <ul className="text-sm text-gray-600 space-y-2">
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Dramatically reduce manual report generation time</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Accelerate financial query resolution</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Improve decision-making speed and accuracy</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Ensure high system reliability and uptime</span>
+              </li>
+            </ul>
           </div>
-        ))}
+          <div className="space-y-2">
+            <ul className="text-sm text-gray-600 space-y-2">
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Eliminate repetitive financial data analysis</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Enable self-service financial insights</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Reduce dependency on manual spreadsheet analysis</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-gray-900">•</span>
+                <span>Provide 24/7 access to financial intelligence</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
-        <h4 className="font-semibold text-gray-900">Key Benefits</h4>
+        <h4 className="font-semibold text-gray-900">Implementation Benefits</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <h5 className="font-medium text-gray-800">Operational Efficiency</h5>
